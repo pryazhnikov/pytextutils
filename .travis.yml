@@ -7,6 +7,7 @@ python:
 script:
   # Run unit tests from code files
   - ./numbers.py
+  - ./datetimes.py
 
   # Run codestyle checks
   - cd "$TRAVIS_BUILD_DIR"
