@@ -1,0 +1,13 @@
+language: python
+python:
+  - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+script:
+  # Run unit tests from code files
+  - ./numbers.py
+
+  # Run codestyle checks
+  - cd "$TRAVIS_BUILD_DIR"
+  - pep8 --config=setup.cfg --statistics -v .
