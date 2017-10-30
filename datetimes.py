@@ -4,6 +4,28 @@ import re
 import unittest
 
 
+def parse_time(text_value):
+    text_value = str(text_value).strip()
+
+    pattern = r'^(?P<hours>0?\d|1\d|2[0-3])\s*:\s*(?P<minutes>[0-5]\d)\s*(?P<day_part>AM|PM|A\.M\.|P\.M\.)'
+    match = re.search(pattern, text_value, re.IGNORECASE)
+    if not match:
+        return None
+
+    hours = int(match.group('hours'))
+    minutes = int(match.group('minutes'))
+    day_part = match.group('day_part').replace('.', '').lower()
+
+    if (day_part == 'pm') and (hours < 12):
+        # 11 PM => 23
+        hours += 12
+    elif (hours == 12) and (day_part == 'am'):
+        # 12 AM => 0
+        hours -= 12
+
+    return '{:02d}:{:02d}:00'.format(int(hours), int(minutes))
+
+
 def parse_russian_date(text_value, now_dt):
     month_name_to_numbers = {
         'января': 1,
@@ -47,6 +69,16 @@ def parse_russian_date(text_value, now_dt):
 
 
 class DateTimesTest(unittest.TestCase):
+    TIME_STRING_TEST_CASES = (
+        ('1:59  AM', '01:59:00'),
+        ('   9:10 pm ', '21:10:00'),
+        ('06:30pm', '18:30:00'),
+        ('19:00pm', '19:00:00'),  # a human error in the input data
+        ('13:10am', '13:10:00'),  # a human error in the input data
+        ('12:01 a.m.', '00:01:00'),
+        ('12:10p.m.', '12:10:00'),
+    )
+
     RUSSIAN_DATE_TEST_CASES = (
         ('2017-10-28', '1 января в 12:13', '2017-01-01 12:13'),
         ('2017-10-28', '12 февраля    12:13', '2017-02-12 12:13'),
@@ -58,6 +90,15 @@ class DateTimesTest(unittest.TestCase):
         ('2017-10-28', '04 августа в 6:05', '2017-08-04 06:05'),
         ('2016-10-28', '8 сентября в 16:40', '2016-09-08 16:40'),
     )
+
+    def test_parse_time(self):
+        for input_value, expected_time in self.TIME_STRING_TEST_CASES:
+            actual_time = parse_time(input_value)
+            self.assertEqual(
+                expected_time,
+                actual_time,
+                "Wrong time value found for {}: {}".format(input_value, actual_time)
+            )
 
     def test_parse_russian_date(self):
         for now_str, input_value, expected_date_time in self.RUSSIAN_DATE_TEST_CASES:
