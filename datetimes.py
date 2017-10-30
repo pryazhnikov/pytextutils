@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import datetime
 import re
 import unittest
@@ -27,7 +26,7 @@ def parse_russian_date(text_value, now_dt):
     dates_reg = '^\s*(?P<day>\d+)\s+(?P<month_name>' + month_names_group \
         + ')\s+((?P<year>20\d{2})(\s+года)?)?(\s*в)?\s+(?P<hours>\d|[012]\d):(?P<minutes>\d{2})'
 
-    match = re.search(dates_reg, text_value, re.IGNORECASE)
+    match = re.search(dates_reg, text_value, re.IGNORECASE | re.UNICODE)
     if not match:
         return None
 
