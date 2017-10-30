@@ -1,4 +1,4 @@
-# Minfin Funds Parser
+# Python Text Utils
 
 [![Build Status](https://travis-ci.org/pryazhnikov/pytextutils.svg?branch=master)](https://travis-ci.org/pryazhnikov/pytextutils)
 
