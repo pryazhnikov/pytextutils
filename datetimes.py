@@ -7,15 +7,28 @@ import unittest
 def parse_time(text_value):
     text_value = str(text_value).strip()
 
-    pattern = r'^(?P<hours>0?\d|1\d|2[0-3])\s*:\s*(?P<minutes>[0-5]\d)\s*(?P<day_part>AM|PM|A\.M\.|P\.M\.)'
-    match = re.search(pattern, text_value, re.IGNORECASE)
+    pattern = r'''
+        ^\s*
+        (?P<hours>0?\d|1\d|2[0-3])
+        \s*:\s*
+        (?P<minutes>[0-5]\d)
+        (\s*:\s*(?P<seconds>[0-5]\d))?
+        \s*
+        (?P<day_part>AM|PM|A\.M\.|P\.M\.)
+        \s*
+        $
+        '''
+    match = re.search(pattern, text_value, re.IGNORECASE | re.VERBOSE)
     if not match:
         return None
 
     hours = int(match.group('hours'))
     minutes = int(match.group('minutes'))
-    day_part = match.group('day_part').replace('.', '').lower()
+    seconds = match.group('seconds')
+    if not seconds:
+        seconds = 0
 
+    day_part = match.group('day_part').replace('.', '').lower()
     if (day_part == 'pm') and (hours < 12):
         # 11 PM => 23
         hours += 12
@@ -23,7 +36,7 @@ def parse_time(text_value):
         # 12 AM => 0
         hours -= 12
 
-    return '{:02d}:{:02d}:00'.format(int(hours), int(minutes))
+    return '{:02d}:{:02d}:{:02d}'.format(int(hours), int(minutes), int(seconds))
 
 
 def parse_russian_date(text_value, now_dt):
@@ -77,6 +90,8 @@ class DateTimesTest(unittest.TestCase):
         ('13:10am', '13:10:00'),  # a human error in the input data
         ('12:01 a.m.', '00:01:00'),
         ('12:10p.m.', '12:10:00'),
+        ('8 : 20 : 45  A.M.', '08:20:45'),
+        ('23:45:30 A.M.', '23:45:30'),  # a human error in the input data
     )
 
     RUSSIAN_DATE_TEST_CASES = (
