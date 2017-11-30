@@ -5,8 +5,8 @@ python:
   - "3.6"
 script:
   # Run unit tests from code files
-  - ./numbers.py
-  - ./datetimes.py
+  - ./pytextutils/numbers.py
+  - ./pytextutils/datetimes.py
 
   # Run codestyle checks
   - cd "$TRAVIS_BUILD_DIR"
