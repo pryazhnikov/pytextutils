@@ -31,19 +31,21 @@ class DateTimesTest(unittest.TestCase):
 
     def test_parse_time(self):
         for input_value, expected_time in self.TIME_STRING_TEST_CASES:
-            actual_time = parse_time(input_value)
-            self.assertEqual(
-                expected_time,
-                actual_time,
-                "Wrong time value found for {}: {}".format(input_value, actual_time)
-            )
+            with self.subTest(input=input_value):
+                actual_time = parse_time(input_value)
+                self.assertEqual(
+                    expected_time,
+                    actual_time,
+                    "Wrong time value found for {}: {}".format(input_value, actual_time)
+                )
 
     def test_parse_russian_date(self):
         for now_str, input_value, expected_date_time in self.RUSSIAN_DATE_TEST_CASES:
-            now = datetime.datetime.strptime(now_str, "%Y-%m-%d")
-            actual_date_time = parse_russian_date(input_value, now)
-            self.assertEqual(
-                expected_date_time,
-                actual_date_time,
-                "Wrong datetime value found for {}: {}".format(input_value, actual_date_time)
-            )
+            with self.subTest(now=now_str, input=input_value):
+                now = datetime.datetime.strptime(now_str, "%Y-%m-%d")
+                actual_date_time = parse_russian_date(input_value, now)
+                self.assertEqual(
+                    expected_date_time,
+                    actual_date_time,
+                    "Wrong datetime value found for {}: {}".format(input_value, actual_date_time)
+                )

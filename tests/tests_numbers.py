@@ -24,9 +24,10 @@ class NumbersTest(unittest.TestCase):
 
     def test_get_int_value(self):
         for input_value, expected_number in self.NUMBER_TEST_CASES:
-            actual_number = get_int_value(input_value)
-            self.assertEqual(
-                expected_number,
-                actual_number,
-                "Wrong number value found for {}".format(input_value)
-            )
+            with self.subTest(input=input_value):
+                actual_number = get_int_value(input_value)
+                self.assertEqual(
+                    expected_number,
+                    actual_number,
+                    "Wrong number value found for {}".format(input_value)
+                )
